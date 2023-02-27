@@ -83,7 +83,7 @@
 
 		<div class="card-container">
 		<div class="cards">
-		<div class="card" style="width: 18rem;" th:each="estate : ${estates}">
+		<div class="card" style="width: 18rem;" th:each="estate : ${estates.content}">
 				<div class="card-img">
 					<img th:src="${img.url}" th:each="img : ${estate.images}" class="card-img-top">
 					<img src="images/nophoto.png" th:if="${estate.images.size == 0 }" class="card-img-top">
@@ -102,6 +102,13 @@
 		
 		</div>
 			
+		</div>
+		<div class="pagination-container">
+				<a th:href="@{'/1'}" th:class="${estates.currentPage == 0 ? 'paging-disabled' : ''}">&laquo;</a>
+				<th:block th:each="page : ${#numbers.sequence(estates.currentPage > 2 ? estates.currentPage -2 : 1, estates.currentPage + 2 < estates.pages ? estates.currentPage + 2 : estates.pages)}">
+					<a th:href="@{'/' + ${page} }" th:text="${page}" th:class="${estates.currentPage == page ? 'page-active' : ''}"></a>
+				</th:block>
+			<a th:href="@{'/' + ${estates.pages}}" th:class="${estates.isLast ? 'paging-disabled' : ''}">&raquo;</a>
 		</div>
 	</div>
 	<footer>

@@ -4,33 +4,39 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import com.example.app.dao.PaginationDto;
 import com.example.app.model.Estate;
 import com.example.app.model.Image;
 import com.example.app.repository.EstateRepository;
 import com.example.app.repository.ImageRepository;
 
+import app.example.app.mapper.PaginationMapper;
+
 @Service
 public class EstateService {
 	
-	private static final int PAGE_SIZE = 10;
+	private static final int PAGE_SIZE = 12;
 	
 	@Autowired
 	private EstateRepository estateRepository;
 	@Autowired
 	private ImageRepository imageRepository;
 	
-	public List<Estate> getEstates(int page) {
-		
-		List<Estate> estates =  estateRepository.findAll(PageRequest.of(page, PAGE_SIZE)).getContent();	
-		List<Long> ids = estates.stream()
+	public PaginationDto<Estate> getEstates(Integer page) {
+		page = (page == null || page <= 0) ? 0 : page - 1;
+		Page<Estate> estates =  estateRepository.findAll(PageRequest.of(page, PAGE_SIZE));	
+		List<Long> ids = estates.getContent().stream()
 				.map(e -> e.getId())
 				.collect(Collectors.toList());
 
 		List<Image> images = imageRepository.findImagesByEstateIds(ids);
-		estates.stream().forEach(e -> e.setImages(getImages(images, e.getId())));
-		return estates;
+		estates.getContent().stream().forEach(e -> e.setImages(getImages(images, e.getId())));
+		
+		return PaginationMapper.mapDto(estates);
 	}
 	
 	private List<Image> getImages(List<Image> images, Long Id) {

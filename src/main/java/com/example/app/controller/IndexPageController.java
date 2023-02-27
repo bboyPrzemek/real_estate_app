@@ -1,8 +1,5 @@
 package com.example.app.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
@@ -10,10 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.example.app.dao.PaginationDto;
 import com.example.app.model.Estate;
-import com.example.app.model.Flat;
-import com.example.app.model.Image;
-import com.example.app.model.User;
 import com.example.app.repository.FlatRepository;
 import com.example.app.repository.ImageRepository;
 import com.example.app.repository.UserRepository;
@@ -32,11 +27,10 @@ public class IndexPageController implements CommandLineRunner{
 	private ImageRepository iRepository;
 	
 	
-	@GetMapping(path = {"/"})
-	public String getEstates(Model model) {
-		
-		List<Estate> es = eService.getEstates(0);
-		model.addAttribute("estates", es);
+	@GetMapping(path = {"/", "/{page}"})
+	public String getEstates(@PathVariable(required = false, value = "page") Integer page, Model model) {
+		PaginationDto<Estate> dao = eService.getEstates(page);
+		model.addAttribute("estates", dao);
 		return "index";
 	}
 
