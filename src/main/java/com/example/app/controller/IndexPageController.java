@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.app.dao.PaginationDto;
+import com.example.app.dto.PaginationDto;
 import com.example.app.model.Estate;
 import com.example.app.repository.FlatRepository;
 import com.example.app.repository.ImageRepository;

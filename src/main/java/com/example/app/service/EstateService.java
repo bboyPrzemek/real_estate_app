@@ -8,13 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.example.app.dao.PaginationDto;
+import com.example.app.dto.PaginationDto;
+import com.example.app.mapper.PaginationMapper;
 import com.example.app.model.Estate;
 import com.example.app.model.Image;
 import com.example.app.repository.EstateRepository;
 import com.example.app.repository.ImageRepository;
-
-import app.example.app.mapper.PaginationMapper;
 
 @Service
 public class EstateService {

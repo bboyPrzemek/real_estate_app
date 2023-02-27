@@ -1,6 +1,7 @@
-package app.example.app.mapper;
+package com.example.app.mapper;
 import org.springframework.data.domain.Page;
-import com.example.app.dao.PaginationDto;
+
+import com.example.app.dto.PaginationDto;
 
 public class PaginationMapper {
 	
