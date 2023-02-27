@@ -103,12 +103,12 @@
 		</div>
 			
 		</div>
-		<div class="pagination-container">
-				<a th:href="@{'/1'}" th:class="${estates.currentPage == 0 ? 'paging-disabled' : ''}">&laquo;</a>
+		<div th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}" class="pagination-container" >
+				<a th:href="${urlBuilder.replaceQueryParam('page', '1').toUriString()}" th:class="${estates.currentPage == 1 ? 'paging-disabled' : ''}">&laquo;</a>
 				<th:block th:each="page : ${#numbers.sequence(estates.currentPage > 2 ? estates.currentPage -2 : 1, estates.currentPage + 2 < estates.pages ? estates.currentPage + 2 : estates.pages)}">
-					<a th:href="@{'/' + ${page} }" th:text="${page}" th:class="${estates.currentPage == page ? 'page-active' : ''}"></a>
+					<a th:href="${urlBuilder.replaceQueryParam('page', page).toUriString()}" th:text="${page}" th:class="${estates.currentPage == page ? 'page-active' : ''}"></a>
 				</th:block>
-			<a th:href="@{'/' + ${estates.pages}}" th:class="${estates.isLast ? 'paging-disabled' : ''}">&raquo;</a>
+			<a th:href="${urlBuilder.replaceQueryParam('page', estates.pages).toUriString()}" th:class="${estates.isLast ? 'paging-disabled' : ''}">&raquo;</a>
 		</div>
 	</div>
 	<footer>
