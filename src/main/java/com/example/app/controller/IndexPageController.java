@@ -2,12 +2,12 @@ package com.example.app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.app.dto.PaginationDto;
 import com.example.app.model.Estate;
 import com.example.app.repository.FlatRepository;
 import com.example.app.repository.ImageRepository;
@@ -29,8 +29,8 @@ public class IndexPageController implements CommandLineRunner{
 	
 	@GetMapping(path = {"/"})
 	public String getEstates(@RequestParam( required = false, value = "page") Integer page, Model model) {
-		PaginationDto<Estate> dao = eService.getEstates(page);
-		model.addAttribute("estates", dao);
+		Page<Estate> data = eService.getEstates(page);
+		model.addAttribute("data", data);
 		return "index";
 	}
 

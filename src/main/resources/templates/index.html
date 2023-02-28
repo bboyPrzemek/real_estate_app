@@ -71,7 +71,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="content">
+	<div class="content" th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}, currentPage=${data.number + 1}, pages = ${data.totalPages}, isLast=${data.isLast}, estates=${data.content}">
 		<div class="slider-container">
 			<div class="slider">
 				<img src="slider/house1.jpg" class="fade-img"> 
@@ -83,32 +83,42 @@
 
 		<div class="card-container">
 		<div class="cards">
-		<div class="card" style="width: 18rem;" th:each="estate : ${estates.content}">
+		<div class="card" style="width: 18rem;" th:each="dt : ${estates}">
 				<div class="card-img">
-					<img th:src="${img.url}" th:each="img : ${estate.images}" class="card-img-top">
-					<img src="images/nophoto.png" th:if="${estate.images.size == 0 }" class="card-img-top">
-					<div class="button-container" th:if="${estate.images.size &gt; 1 }">
+					<img th:src="${img.url}" th:each="img : ${dt.images}" class="card-img-top">
+					<img src="images/nophoto.png" th:if="${dt.images.size == 0 }" class="card-img-top">
+					<div class="button-container" th:if="${dt.images.size &gt; 1 }">
 						<div class="display-left arrowBtn">&#10094;</div>
 						<div class="display-right arrowBtn">&#10095;</div>
 					</div>
 				</div>
 
 				<div class="card-body">
-					<h6 class="card-title" th:text="${estate.name}"></h6>
+					<h6 class="card-title" th:text="${dt.name}"></h6>
 					<span class="card-text">Koszalin, Grunwaldzka 17</span>
-					<span class="price" th:text="${estate.price}"></span>
+					<span class="price" th:text="${dt.price}"></span>
 				</div>
 			</div>
 		
 		</div>
 			
 		</div>
-		<div th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}" class="pagination-container" >
-				<a th:href="${urlBuilder.replaceQueryParam('page', '1').toUriString()}" th:class="${estates.currentPage == 1 ? 'paging-disabled' : ''}">&laquo;</a>
-				<th:block th:each="page : ${#numbers.sequence(estates.currentPage > 2 ? estates.currentPage -2 : 1, estates.currentPage + 2 < estates.pages ? estates.currentPage + 2 : estates.pages)}">
-					<a th:href="${urlBuilder.replaceQueryParam('page', page).toUriString()}" th:text="${page}" th:class="${estates.currentPage == page ? 'page-active' : ''}"></a>
+		<div class="pagination-container">
+			<div class="pagination-wrapper" th:if="${currentPage &lt;= pages}">
+				<a th:href="${urlBuilder.replaceQueryParam('page', currentPage - 1).toUriString()}" th:class="${currentPage == 1 ? 'paging-disabled' : ''}">&lsaquo;</a>
+				<th:block th:if="${currentPage &gt;= 3 and pages > 3}">
+					<a th:href="${urlBuilder.replaceQueryParam('page', 1).toUriString()}">1</a>
+					<a class="dots">...</a>
 				</th:block>
-			<a th:href="${urlBuilder.replaceQueryParam('page', estates.pages).toUriString()}" th:class="${estates.isLast ? 'paging-disabled' : ''}">&raquo;</a>
+				<th:block th:each="page : ${#numbers.sequence(currentPage < 3 ? 1 : currentPage == pages ? currentPage -2 : currentPage - 1, currentPage < 3 ? 3 : currentPage == pages ? pages : currentPage + 1) }">
+					<a th:href="${urlBuilder.replaceQueryParam('page', page).toUriString()}" th:text="${page}" th:class="${currentPage == page ? 'page-active' : ''}"></a>
+				</th:block>
+				<th:block th:if="${pages - currentPage > 1 and pages > 3}">
+					<a class="dots">...</a>
+					<a th:href="${urlBuilder.replaceQueryParam('page', pages).toUriString()}" th:text="${pages}"></a>
+				</th:block>
+				<a th:href="${urlBuilder.replaceQueryParam('page', currentPage + 1).toUriString()}" th:class="${isLast ? 'paging-disabled' : ''}">&rsaquo;</a>
+			</div>
 		</div>
 	</div>
 	<footer>
