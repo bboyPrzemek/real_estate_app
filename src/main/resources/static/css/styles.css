@@ -277,10 +277,12 @@ footer a, .footer-element{
   transition: background-color .3s;
 }
 
-.pagination-container a:hover:not(.page-active) {background-color: #ddd;}
+.pagination-container a:hover:not(.page-active) {
+	background-color: #ddd;
+}
 
 .pagination-container a.page-active {
-  background-color: #4CAF50;
+  background-color: var(--yellow-color); 
   color: white;
 }
 
