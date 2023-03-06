@@ -110,7 +110,7 @@
 					<a th:href="${urlBuilder.replaceQueryParam('page', 1).toUriString()}">1</a>
 					<a class="dots">...</a>
 				</th:block>
-				<th:block th:each="page : ${#numbers.sequence(currentPage < 3 ? 1 : currentPage == pages ? currentPage -2 : currentPage - 1, currentPage < 3 ? 3 : currentPage == pages ? pages : currentPage + 1) }">
+				<th:block th:each="page : ${#numbers.sequence(currentPage < 3 ? 1 : currentPage == pages ? currentPage -2 : currentPage - 1, pages < 3 ? pages : currentPage < 3 ? 3 : currentPage == pages ? pages : currentPage + 1) }">
 					<a th:href="${urlBuilder.replaceQueryParam('page', page).toUriString()}" th:text="${page}" th:class="${currentPage == page ? 'page-active' : ''}"></a>
 				</th:block>
 				<th:block th:if="${pages - currentPage > 1 and pages > 3}">
