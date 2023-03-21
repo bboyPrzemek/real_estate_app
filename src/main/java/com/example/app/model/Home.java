@@ -1,6 +1,7 @@
 package com.example.app.model;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -21,4 +22,6 @@ public abstract class Home extends Estate {
 	private int garages;
 	private Boolean loggia;
 	private Boolean balcony;
+	@Enumerated
+	private MarketType marketType;
 }

@@ -12,6 +12,7 @@ import com.example.app.model.Estate;
 import com.example.app.model.Image;
 import com.example.app.repository.EstateRepository;
 import com.example.app.repository.ImageRepository;
+import com.example.app.utils.ServiceUtils;
 
 @Service
 public class EstateService {
@@ -27,22 +28,16 @@ public class EstateService {
 		page = (page == null || page <= 0) ? 0 : page - 1;
 		Page<Estate> estates =  estateRepository.findAll(PageRequest.of(page, PAGE_SIZE));	
 		
-		
 		List<Long> ids = estates.getContent().stream()
 				.map(e -> e.getId())
 				.collect(Collectors.toList());
 
 		List<Image> images = imageRepository.findImagesByEstateIds(ids);
-		estates.getContent().stream().forEach(e -> e.setImages(getImages(images, e.getId())));
+		estates.getContent().stream().forEach(e -> e.setImages(ServiceUtils.getImages(images, e.getId())));
 		
 		return estates;
 	}
 	
-	private List<Image> getImages(List<Image> images, Long Id) {
-		return images.stream()
-				.filter(i -> i.getEstate().getId() == Id)
-				.sorted((i1, i2) -> Boolean.compare(i2.getIsPrimary(),i1.getIsPrimary()))
-				.collect(Collectors.toList());
-	}
+	
 
 }

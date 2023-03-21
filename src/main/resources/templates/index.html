@@ -8,7 +8,9 @@
 	<title>Document</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
 	<link th:href="@{/css/styles.css}" rel="stylesheet" />
+	
 </head>
 
 <body>
@@ -53,8 +55,8 @@
 				<div class="search-item">
 					<label for="offerType">Typ oferty</label>
 					<select class="form-select-sm" id="offerType">
-						<option value="rent">Na Wynajem</option>
 						<option value="sell">Na Sprzedaż</option>
+						<option value="rent">Na Wynajem</option>
 					</select>
 				</div>
 				<div class="search-item">
@@ -76,8 +78,8 @@
 				<div class="fixed-search-container">
 					<div class="fixed-search-item">
 						<div>
-							<label for="city">Miejscowość</label>
-							<input type="text" placeholder="Miejscowość" name="city" id="city" class="form-control-sm">
+							<label for="location">Lokalizacja</label>
+							<input type="text" placeholder="Miejscowość" name="location" id="city" class="form-control-sm">
 						</div>
 					</div>
 					<div class="fixed-search-item">
@@ -107,6 +109,7 @@
 						<div>
 							<label for="rooms">Liczba pokoi</label>
 							<select id="rooms" class="form-select-sm" name="rooms">
+								<option value=""></option>
 								<option value="1">1</option>
 								<option value="2">2</option>
 								<option value="3">3</option>
@@ -116,6 +119,7 @@
 						<div>
 							<label for="floor">Piętro</label>
 							<select id="floor" class="form-select-sm" name="floor">
+								<option value=""></option>
 								<option value="0">Parter</option>
 								<option value="1">1</option>
 								<option value="2">2</option>
@@ -130,8 +134,8 @@
 							</select>
 						</div>
 						<div>
-							<label for="market">Rynek</label>
-							<select id="market" class="form-select-sm" name="market">
+							<label for="marketType">Rynek</label>
+							<select id="marketType" class="form-select-sm" name="marketType">
 								<option value="">Wszystkie</option>
 								<option value="secondary">Wtórny</option>
 								<option value="primary">Pierwotny</option>
@@ -174,8 +178,8 @@
 
 				<div class="card-body">
 					<h6 class="card-title" th:text="${dt.name}"></h6>
-					<span class="card-text">Koszalin, Grunwaldzka 17</span>
-					<span class="price" th:text="${dt.price}"></span>
+					<span class="card-text" th:text="${dt.address.city}"></span>
+					<span class="price" th:text="${dt.address.street}"></span>
 				</div>
 			</div>
 		</div>
@@ -240,8 +244,21 @@
 </body>
 
 <script>
+
+	showAdvancedSearchIfCookieSet();
+	setInputsFromURL();
+	function showAdvancedSearchIfCookieSet(){
+		if (Cookies.get('a-search') == 'true'){
+			$('.search-advanced').show();
+			$('#advancedSearch').text('Mniej filtrów');
+		}
+	}
+	
 	$('form').on('submit', function (e) {
 	    e.preventDefault();
+	    
+	    if (Cookies.get('a-search') == 'false') clearFilters();
+	    
 	    const form_ = $('form');
 	    const offerType = $('#offerType').val();
 	    const estateType = $('#estateType').val();
@@ -266,15 +283,58 @@
 		if ($('.search-advanced').is(":visible")) {
 			$('.search-advanced').hide();
 			$('#advancedSearch').text('Więcej filtrów');
+			Cookies.set('a-search', false);
 		} else {
 			$('.search-advanced').show();
+			Cookies.set('a-search', true);
 			$('#advancedSearch').text('Mniej filtrów');
 		}
 	})
 	
-	function clearFilters(){
+	function setInputsFromURL(){
+		const url = window.location.href;
+		const params = getParams(url);
 		
+		$(params).each((i, param)=>{
+			$('[name = "' + param.name + '"').val(param.value);
+		})
+		
+		const paths = url.split('?')[0].split('/');
+		let sIndex = 0;
+		$(paths).each((i , path)=>{
+			if (path == 'search'){
+				sIndex = i;
+			}
+		})
+		
+		if (sIndex !== 0){
+			$('#offerType').val(paths[sIndex + 1]);
+			$('#estateType').val(paths[sIndex + 2]);	
+		}
 	}
+	
+	function clearFilters(){
+		$('.search-advanced input').val('');
+		$('.search-advanced select').prop('selectedIndex',0);
+	}
+	
+	function getParams(url) {
+
+        var queryString = url.substring(url.indexOf('?') + 1);
+        var paramsArr = queryString.split('&');
+        var params = [];
+
+        for (var i = 0, len = paramsArr.length; i < len; i++) {
+            var keyValuePair = paramsArr[i].split('=');
+            params.push({
+                name: keyValuePair[0],
+                value: keyValuePair[1]
+            });
+        }
+
+        return params;
+}
+	
 	
 	
 
