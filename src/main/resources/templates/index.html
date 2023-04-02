@@ -17,7 +17,9 @@
 	<div class="nav-container">
 		<div class="nav-top">
 			<div class="logo">
-				<img th:src="@{/logo/logo4.png}" height="60px">
+				<a th:href="@{/}">
+					<img th:src="@{/logo/logo4.png}" height="60px">
+				</a>
 			</div>
 			<div class="social-icons">
 				<img th:src="@{/icons/icon_fb.png}"> 
@@ -30,7 +32,7 @@
 			<div class="menu">
 				<div class="menu-links">
 					<div>
-						<a href="#">Dodaj ogłoszenie</a>
+						<a th:href="@{/new-estate/categories}">Dodaj ogłoszenie</a>
 					</div>
 					<div class="separator"></div>
 					<div>
@@ -49,8 +51,8 @@
 		<form th:action="@{/search/}">
 			<div class="search-basic">
 				<div class="search-item">
-					<label for="keywords">Search keywords</label>
-					<input type="text" id="keywords"  class="form-control-sm"  name="keywords">
+					<label for="name">Search keywords</label>
+					<input type="text" id="name"  class="form-control-sm"  name="name">
 				</div>
 				<div class="search-item">
 					<label for="offerType">Typ oferty</label>
@@ -380,7 +382,7 @@
 	})
 </script>
 
-</body>
+
 <script th:src="@{/scripts/slider.js}"></script>
 
 

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Good Thymes Virtual Grocery</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+	crossorigin="anonymous">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+<link th:href="@{/css/styles.css}" rel="stylesheet" />
+<link th:href="@{/css/create_styles.css}" rel="stylesheet" />
+
+<style>
+#location-element {
+	position: relative;
+}
+
+.location-options_wrapper {
+	display: none;
+	border: 1px solid black;
+	width: calc(100% - 10px);
+	position: absolute;
+	max-height: 100px;
+	overflow-Y: auto;
+	border-top: 0;
+	border-radius: 10px;
+	background-color: white;
+}
+
+.location-options div:hover {
+	background-color: #1E90FF;
+	color: white;
+	cursor: default;
+}
+
+.location-options span {
+	padding-left: 12px
+}
+
+.clrInp {
+	height: 10px;
+	position: absolute;
+	top: 35px;
+	right: 10px;
+	display: none;
+}
+
+.clrInp:hover {
+	cursor: pointer;
+}
+
+.validation-error {
+	color: red;
+}
+
+.categories {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+	justify-items: center;
+	margin: 50px 0;
+}
+
+.categories a {
+	text-decoration: none;
+	color: black;
+}
+</style>
+
+</head>
+
+<body>
+	<div class="nav-container">
+		<div class="nav-top">
+			<div class="logo">
+				<a th:href="@{/}"> <img th:src="@{/logo/logo4.png}"
+					height="60px">
+				</a>
+			</div>
+			<div class="social-icons">
+				<img th:src="@{/icons/icon_fb.png}"> <img
+					th:src="@{/icons/icon_twitter.png}"> <img
+					th:src="@{/icons/icon_yt.png}"> <img
+					th:src="@{/icons/icon_share.png}">
+			</div>
+		</div>
+		<div class="nav-middle">
+			<div class="menu">
+				<div class="menu-links">
+					<div>
+						<a th:href="@{/new-estate/categories}">Dodaj ogłoszenie</a>
+					</div>
+					<div class="separator"></div>
+					<div>
+						<a href="#">Zarejestruj się</a>
+					</div>
+					<div class="separator"></div>
+					<div>
+						<a href="#">Logowanie</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="nav-bottom"></div>
+	</div>
+
+	<div class="content">
+		<div class="categories">
+			<a th:each="category : ${T(com.example.app.model.EstateType).values()}" th:href="@{/new-estate/} + ${category}">
+				<div class="card" style="width: 18rem;">
+					<div class="card-body">
+						<h5 class="card-title" th:text="${category.displayName}"></h5>
+					</div>
+				</div>
+			</a>
+		</div>
+
+	</div>
+
+	<footer>
+		<div class="footer-container">
+			<div class="footer-element">
+				<h5>Product</h5>
+				<a href="#">Agent Manager</a> <a href="#">Designs Our Customers</a>
+				<a href="#">What's new?</a>
+			</div>
+			<div class="footer-element">
+				<h5>Use Cases</h5>
+				<a href="#">Brokers REALTORS ®</a> <a href="#">Agents</a> <a
+					href="#">Admins</a>
+
+			</div>
+			<div class="footer-element">
+				<h5>Company</h5>
+				<a href="#">About us</a> <a href="#">Careers</a> <a href="#">Press
+					Kit</a> <a href="#">Terms</a>
+			</div>
+			<div class="footer-element">
+				<h5>Resources</h5>
+				<a href="#">Marketing Academy</a> <a href="#">Knowledge base</a> <a
+					href="#">Webinars</a>
+			</div>
+
+			<div class="footer-element">
+				<h5>Contact</h5>
+				Contact 800-728-8391 <a href="#">support@placester.com </a> 33 Arch
+				Street, 17th <br> Floor Boston, MA 02110
+			</div>
+		</div>
+
+	</footer>
+</body>
+
+
+
+<script>
+
+	$('#locationInput').on('keydown', function(e){
+		const key = event.key;
+		let this_ = $(this);
+		let location = $("input[name='location']");
+	    if ((key === "Backspace" || key === "Delete") && location.val()) {
+	    	this_.val("");
+	    	location.val("");
+	    	$('.clrInp').hide();
+	    }
+	})
+	
+	$('#locationInput').on('input', function(e){
+		let this_ = $(this);
+		
+		if (!this_.val()) {
+			$("input[name='location']").val("");
+			$('.clrInp').hide();
+			return;
+		}else{
+			$('.clrInp').show();
+		}
+		
+		$.ajax({
+		     type : "GET",
+		     url : "/location/search/" + this_.val(),
+		     contentType: "application/json",
+		     dataType: "json",
+		     success : function (data, status) {
+		    	 console.log(data)
+		    	 createLocationSelectOptions(data);
+		     },
+		     error : function (status) {
+		        
+		     }
+		 });
+		
+	})
+	
+	$('.clrInp').on('click', function(){
+		$("input[name='location']").val("");
+		$("#locationInput").val("");
+		$(this).hide();
+	})
+	
+	$('.location-options').on('click', 'div', function(){
+		const this_ = $(this);
+		$("input[name='location']").val(this_.attr("id"));
+		$("#locationInput").val(this_.find('span').text())
+		$('.location-options_wrapper').hide();
+		
+		if ($("input[name='location']").val()){
+			$('.clrInp').show();
+		}
+	})
+	
+	
+	
+	function createLocationSelectOptions(data) {
+	    let locationOptions = $('.location-options');
+	    let locationOptionsWrapper = $('.location-options_wrapper');
+	    locationOptions.empty();
+	
+	    if (data.length > 0) {
+	    	locationOptionsWrapper.show();
+	    }else{
+	    	locationOptionsWrapper.hide();
+	    }
+	
+	    $(data).each((i, element) => {
+	    	const div = $('<div/>',{id : element.id});
+	    	div.append($('<span>', {
+	            text: element.city + ", " + element.street + ", " + element.province
+	        }))
+	        locationOptions.append(div);
+	    })
+	}
+	
+</script>
+
+
+
+</html>

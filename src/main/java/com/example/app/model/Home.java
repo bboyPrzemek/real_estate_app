@@ -19,8 +19,6 @@ import lombok.Setter;
 public abstract class Home extends Estate {
 	private int rooms;
 	private Boolean garage;
-	private int garages;
-	private Boolean loggia;
 	private Boolean balcony;
 	@Enumerated
 	private MarketType marketType;

@@ -1,0 +1,37 @@
+input:not([type='file']),
+textarea,
+select{
+    width: 100%;
+}
+
+#createForm {
+    max-width: 1280px;
+}
+
+.form-element {
+    margin-top: 20px
+}
+
+.form-group {
+    display: flex;
+}
+
+.form-element {
+    flex: 1;
+}
+
+#location-element{
+    flex:2;
+}
+
+.form-group .form-element{
+    padding: 0 10px;
+}
+
+.form-group .form-element:first-of-type {
+    padding: 0 10px 0 0;
+}
+
+.form-group .form-element:last-of-type {
+    padding: 0 0 0 10px;
+}

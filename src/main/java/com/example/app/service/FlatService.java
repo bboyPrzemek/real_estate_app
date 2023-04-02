@@ -17,16 +17,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.example.app.formData.FlatFormData;
-import com.example.app.formData.FormData;
+import com.example.app.formData.CreateFormData;
 import com.example.app.formData.FormServiceInterface;
+import com.example.app.formData.SearchFormData;
 import com.example.app.model.Address;
+import com.example.app.model.EstateType;
 import com.example.app.model.Flat;
 import com.example.app.model.Image;
 import com.example.app.model.MarketType;
 import com.example.app.model.OfferType;
+import com.example.app.model.User;
+import com.example.app.repository.AddressRepository;
 import com.example.app.repository.FlatRepository;
 import com.example.app.repository.ImageRepository;
+import com.example.app.repository.UserRepository;
 import com.example.app.utils.ServiceUtils;
 
 @Service
@@ -35,11 +39,14 @@ public class FlatService implements FormServiceInterface {
 	@Autowired
 	private FlatRepository flatRepository;
 	@Autowired
+	private UserRepository uRepository;
+	@Autowired
+	private AddressRepository aRepository;
+	@Autowired
 	private ImageRepository imageRepository;
 	private int PAGE_SIZE = 12;
 
-	public Page<Flat> search(FormData formData, Integer page) {
-		FlatFormData fFormData = new FlatFormData(formData);
+	public Page<Flat> search(SearchFormData formData, Integer page) {
 		page = (page == null || page <= 0) ? 0 : page - 1;
 
 		Page<Flat> flats = flatRepository.findAll(new Specification<Flat>() {
@@ -47,49 +54,49 @@ public class FlatService implements FormServiceInterface {
 			public Predicate toPredicate(Root<Flat> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<>();
 
-				if (fFormData.getKeywords() != null) {
+				if (formData.getName() != null) {
 					predicates.add(criteriaBuilder
-							.and(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), fFormData.getKeywords()),
-									criteriaBuilder.like(root.get("description"), fFormData.getKeywords()))));
+							.and(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + formData.getName() + "%"),
+									criteriaBuilder.like(root.get("description"),"%" + formData.getName() + "%"))));
 				}
-				if (fFormData.getPriceFrom() != null) {
+				if (formData.getPriceFrom() != null) {
 					predicates.add(criteriaBuilder
-							.and(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), fFormData.getPriceFrom())));
+							.and(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), formData.getPriceFrom())));
 				}
-				if (fFormData.getPriceTo() != null) {
+				if (formData.getPriceTo() != null) {
 					predicates.add(criteriaBuilder
-							.and(criteriaBuilder.lessThanOrEqualTo(root.get("price"), fFormData.getPriceTo())));
+							.and(criteriaBuilder.lessThanOrEqualTo(root.get("price"), formData.getPriceTo())));
 				}
-				if (fFormData.getAreaFrom() != null) {
+				if (formData.getAreaFrom() != null) {
 					predicates.add(criteriaBuilder
-							.and(criteriaBuilder.greaterThanOrEqualTo(root.get("size"), fFormData.getAreaFrom())));
+							.and(criteriaBuilder.greaterThanOrEqualTo(root.get("size"), formData.getAreaFrom())));
 				}
-				if (fFormData.getAreaTo() != null) {
+				if (formData.getAreaTo() != null) {
 					predicates.add(criteriaBuilder
-							.and(criteriaBuilder.lessThanOrEqualTo(root.get("size"), fFormData.getAreaTo())));
+							.and(criteriaBuilder.lessThanOrEqualTo(root.get("size"), formData.getAreaTo())));
 				}
-				if (fFormData.getOfferType() != null) {
+				if (formData.getOfferType() != null) {
 					predicates.add(criteriaBuilder.and(
-							criteriaBuilder.equal(root.get("offerType"), OfferType.valueOf(fFormData.getOfferType()))));
+							criteriaBuilder.equal(root.get("offerType"), OfferType.valueOf(formData.getOfferType()))));
 				}
-				if (fFormData.getMarketType() != null) {
+				if (formData.getMarketType() != null) {
 					predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("marketType"),
-							MarketType.valueOf(fFormData.getMarketType()))));
+							MarketType.valueOf(formData.getMarketType()))));
 				}
-				if (fFormData.getFloor() != null) {
-					predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("floor"), fFormData.getFloor())));
+				if (formData.getFloor() != null) {
+					predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("floor"), formData.getFloor())));
 				}
-				if (fFormData.getRooms() != null) {
-					predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("rooms"), fFormData.getRooms())));
+				if (formData.getRooms() != null) {
+					predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("rooms"), formData.getRooms())));
 				}
 
 				Join<Address, Flat> flatAddress = currentQueryIsCountRecords(query) ? root.join("address") : (Join) root.fetch("address", JoinType.INNER);
 
-				if (fFormData.getLocation() != null) {
+				if (formData.getLocation() != null) {
 					predicates.add(criteriaBuilder.and(
-							criteriaBuilder.or(criteriaBuilder.like(flatAddress.get("city"), fFormData.getLocation()),
-									criteriaBuilder.like(flatAddress.get("province"), fFormData.getLocation()),
-									criteriaBuilder.like(flatAddress.get("street"), fFormData.getLocation()))));
+							criteriaBuilder.or(criteriaBuilder.like(flatAddress.get("city"), formData.getLocation()),
+									criteriaBuilder.like(flatAddress.get("province"), formData.getLocation()),
+									criteriaBuilder.like(flatAddress.get("street"), formData.getLocation()))));
 				}
 
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -106,6 +113,25 @@ public class FlatService implements FormServiceInterface {
 
 	private boolean currentQueryIsCountRecords(CriteriaQuery<?> criteriaQuery) {
 		return criteriaQuery.getResultType() == Long.class || criteriaQuery.getResultType() == long.class;
+	}
+
+	@Override
+	public Boolean create(CreateFormData formData) {
+		
+		Address address = aRepository.findById(Long.valueOf(formData.getLocation())).get();
+		
+		User user = uRepository.findById(3L).get();		
+		Flat flat  = new Flat();
+		flat.setEstateType(EstateType.valueOf(formData.getEstateType()));
+		flat.setOfferType(OfferType.valueOf(formData.getOfferType()));
+		flat.setName(formData.getName());
+		flat.setDescription(formData.getDescription());
+		flat.setAddress(address);
+		flat.setUser(user);
+		flatRepository.save(flat);
+		
+		
+		return null;
 	}
 
 }

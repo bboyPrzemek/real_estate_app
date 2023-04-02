@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.app.formData.FormData;
+import com.example.app.formData.SearchFormData;
 import com.example.app.model.Address;
 import com.example.app.model.Estate;
 import com.example.app.model.Flat;
@@ -53,7 +53,7 @@ public class IndexPageController implements CommandLineRunner{
 	//FormServiceInterface formServiceInterface;
 	
 	@GetMapping(path = {"/"})
-	public String getEstates(@RequestParam( required = false, value = "page") Integer page, @ModelAttribute FormData formDTO, Model model) {
+	public String getEstates(@RequestParam( required = false, value = "page") Integer page, @ModelAttribute SearchFormData formDTO, Model model) {
 		Page<Estate> data = eService.getEstates(page);
 		model.addAttribute("data", data);
 		return "index";
@@ -61,7 +61,7 @@ public class IndexPageController implements CommandLineRunner{
 	
 	@GetMapping(path = "/search/{offerType}/{estateType}")
 	public String searchEstates(@RequestParam( required = false, value = "page") Integer page,
-			@ModelAttribute FormData baseSearchFormDto, 
+			@ModelAttribute SearchFormData baseSearchFormDto, 
 			@PathVariable("offerType") String offerType, 
 			@PathVariable("estateType") 
 			String estateType,
@@ -79,6 +79,22 @@ public class IndexPageController implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
+		List<Address> addressList = aRepository.searchLocation("Kosz");
+		
+		
+		
+		System.out.println(addressList.size());
+		
+		for (Address a : addressList) {
+			
+			System.out.println(a.getCity());
+			System.out.println(a.getProvince());
+			System.out.println(a.getStreet());
+		}
+		
+		
+		
+		
 //	
 //		Address address = new Address();
 //		address.setCity("Koszalin");

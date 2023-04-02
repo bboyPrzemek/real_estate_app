@@ -6,5 +6,6 @@ import com.example.app.model.Estate;
 
 
 public interface FormServiceInterface{
-	 Page<? extends Estate> search(FormData formData, Integer page);
+	 Page<? extends Estate> search(SearchFormData formData, Integer page);
+	 Boolean create(CreateFormData formData);
 }

@@ -17,7 +17,7 @@ import com.example.app.utils.ServiceUtils;
 @Service
 public class EstateService {
 	
-	private static final int PAGE_SIZE = 12;
+	private static final int PAGE_SIZE = 24;
 	
 	@Autowired
 	private EstateRepository estateRepository;

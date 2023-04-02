@@ -12,8 +12,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Component
-public class FormData {
-	 private String keywords;
+public class SearchFormData {
+	 private String name;
 	 private String location;
 	 private String priceFrom;
 	 private String priceTo;
@@ -24,11 +24,13 @@ public class FormData {
 	 private String marketType;
 	 private String buildingType;
 	 private String offerType;
+	 private String estateType;
+	 private String description;
 	 
 	 
 	 @Override
 	 public String toString() {
-		 return "FormData [keywords=" + keywords + ", location=" + location + ", priceFrom=" + priceFrom + ", priceTo=" + priceTo
+		 return "FormData [keywords=" + name + ", location=" + location + ", priceFrom=" + priceFrom + ", priceTo=" + priceTo
 				 + ", areaFrom=" + areaFrom + ", areaTo=" + areaTo + ", rooms=" + rooms + ", floor=" + floor
 				 + ", market=" + marketType + ", buildingType=" + buildingType + ", offerType=" + offerType + "]";
 	 }

@@ -10,12 +10,6 @@ html, body {
 	padding: 0;
 }
 
-body {
-	display: flex;
-	justify-content: center;
-	flex-direction: column;
-}
-
 .social-icons img {
 	width: 25px;
 	;
@@ -245,7 +239,8 @@ footer{
 	justify-content: space-between;
     display: flex;
     max-width: 1280px;
-    margin: 20px auto;
+    margin: 20px auto 0 auto;
+    padding:20px 0;
 }
 
 footer a, .footer-element{
